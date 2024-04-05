@@ -1,0 +1,18 @@
+{% load blog_tags %}
+
+<div class="offcanvas offcanvas-start bg-dark text-light" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Главная</h5>
+        <button type="button" class="btn-close bg-info btg-danger" data-bs-dismiss="offcanvas" aria-label="Закрыть"></button>
+      </div>
+      <div class="offcanvas-body">
+        <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+          {% get_categories as categories %}
+          {% for category in categories %}
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="{{ category.get_absolute_url }}">{{ category.title }}</a>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>

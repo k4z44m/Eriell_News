@@ -1,0 +1,14 @@
+<div class="col">
+    <a href="{{ article.get_absolute_url }}">
+    <div class="card text-bg-dark">
+        <img src="{{ article.get_image }}" class="card-img" alt="..." style="object-fit: cover" height="300px">
+        <div class="card-img-overlay d-flex justify-content-center align-items-end">
+            <div>
+                <h5 class="card-title text-center">{{ article.title }}</h5>
+                <p class="card-text text-center">{{ article.content|truncatewords:5 }}</p>
+                <p class="card-text text-center"><small>{{ article.updated_at }}</small></p>
+            </div>
+        </div>
+    </div>
+    </a>
+</div>

@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+
+
+{% block title %}
+{{ title }}
+{% endblock title %}
+
+
+{% block main %}
+
+<div class="d-flex justify-content-center mt-2">
+    <div class="col-8 card" style="border: 0px">
+        <div class="d-flex justify-content-between mb-2">
+            <div>
+                <h4>Категория: {{ article.category }}</h4>
+            </div>
+
+            <div class="d-flex justify-content-end">
+                <a href="{% url 'index' %}" class="btn btn-dark mx-1">Назад</a>
+                <a href="{% url 'update' article.pk %}" class="btn btn-dark mx-1">Изменить</a>
+                <a href="{% url 'delete' article.pk %}" class="btn btn-dark mx-1">Удалить</a>
+            </div>
+        </div>
+        <img src="{{ article.get_image }}"
+             alt="">
+        <div class="d-flex justify-content-between">
+            <h3>{{ article.title }}</h3>
+
+            <div class="d-flex justify-content-end">
+
+                {% if not like %}
+                <a href="{% url 'mark' article.pk 'add_like' %}" class="h3">
+                    <i class="bi bi-hand-thumbs-up"></i>
+                </a>
+                {% else %}
+                <a href="{% url 'mark' article.pk 'delete_like' %}" class="h3">
+                    <i class="bi bi-hand-thumbs-up-fill"></i>
+                </a>
+                {% endif %}
+
+
+                <p>{{ likes_count }}</p>
+
+
+                {% if not dislike %}
+                <a href="{% url 'mark' article.pk 'add_dislike' %}" class="h3">
+                    <i class="bi bi-hand-thumbs-down"></i>
+                </a>
+                {% else %}
+                <a href="{% url 'mark' article.pk 'delete_dislike' %}" class="h3">
+                    <i class="bi bi-hand-thumbs-down-fill"></i>
+                </a>
+                {% endif %}
+                <p>{{ dislikes_count }}</p>
+                    <p>Views: {{ article.views }}</p>
+
+            </div>
+
+
+
+
+
+
+        </div>
+        <p>{{ article.content|linebreaks }}</p>
+
+
+        <p class="text-secondary">{{ article.created_at }}</p>
+
+        {% if request.user.is_authenticated %}
+        <form action="{% url 'save_comment' article.pk %}" method="post">
+            {% csrf_token %}
+            {{ comment_form }}
+            <button type="submit" class="btn btn-dark mt-3">Send comment</button>
+        </form>
+        {% else %}
+        <p>Please log in to write a comment.</p>
+        {% endif %}
+
+        {% for comment in comments %}
+
+        <div class="p-4 mt-3" style="border:1px solid gray; border-radius:10px">
+            <h4>{{ comment.user}}</h4>
+            <p class="small"> {{ comment.created_at }}</p>
+            <p class="pt-2">{{ comment.text }}</p>
+
+            <button class="btn btn-primary" id="reply" onclick="openForm({{ comment.pk }})">Answer</button>
+
+            <form action="{% url 'save_comment' article.pk %}" method="post" id="open{{ comment.pk }}" style="display:none;">
+                {% csrf_token %}
+                <input type="hidden" name="parent" value="{{ comment.pk }}">
+                {{ comment_form.as_p }}
+                <button type="submit" class="btn btn-dark">Answer</button>
+                <button type="button" class="btn btn-danger" onclick="closeForm({{ comment.pk }})">Close</button>
+            </form>
+        </div>
+            {% for com in comment.children.all %}
+                <div class="p-4 mt-3" style="border:1px solid gray; border-radius:10px; margin-left:75px">
+                    <h4>{{ com.user}}</h4>
+                    <p class="small"> {{ com.created_at }}</p>
+                    <p class="pt-2">{{ com.text }}</p>
+                </div>
+            {% endfor %}
+
+
+
+        {% endfor %}
+
+        <h3 class="mt-5">Recommended articles: </h3>
+        <div class="row row-cols-1 row-cols-md-3 g-4 mb-4">
+            {% for article in articles %}
+                {% include 'blog/components/_card.html' %}
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% endblock main %}
